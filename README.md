@@ -1,0 +1,1 @@
+# linkedin-vanity-url-resolver
