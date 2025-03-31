@@ -6,16 +6,13 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-// Explicit executablePath for "Chrome for Testing" buildpack (exact!)
-const chromeExecutablePath = process.env.GOOGLE_CHROME_BIN || '/app/.heroku/chrome-for-testing/chrome-linux64/chrome';
-
 app.post('/api/getVanityUrl', async (req, res) => {
     const { linkedinUrl } = req.body;
     let browser;
 
     try {
         browser = await puppeteer.launch({
-            executablePath: chromeExecutablePath, // <-- Explicit path is critical
+            executablePath: process.env.GOOGLE_CHROME_BIN, // Use the environment variable
             args: ['--no-sandbox', '--disable-setuid-sandbox'],
             headless: true
         });
