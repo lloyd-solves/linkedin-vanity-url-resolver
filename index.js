@@ -1,10 +1,13 @@
 const express = require('express');
-const puppeteer = require('puppeteer');
+const puppeteer = require('puppeteer-core'); // note: puppeteer-core here
 const cors = require('cors');
 
 const app = express();
 app.use(express.json());
 app.use(cors());
+
+// This is the key line for Puppeteer on Heroku:
+const chromeExecutablePath = process.env.GOOGLE_CHROME_BIN || '/app/.apt/usr/bin/google-chrome';
 
 app.post('/api/getVanityUrl', async (req, res) => {
     const { linkedinUrl } = req.body;
@@ -14,12 +17,12 @@ app.post('/api/getVanityUrl', async (req, res) => {
     try {
         browser = await puppeteer.launch({
             headless: true,
+            executablePath: chromeExecutablePath,
             args: ['--no-sandbox', '--disable-setuid-sandbox']
         });
 
         const page = await browser.newPage();
 
-        // Set minimal resources to speed up page load
         await page.setRequestInterception(true);
         page.on('request', req => {
             if (['image', 'stylesheet', 'font', 'script'].includes(req.resourceType())) {
