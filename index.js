@@ -6,8 +6,6 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-const chromeExecutablePath = process.env.GOOGLE_CHROME_BIN || '/app/.apt/usr/bin/google-chrome-stable';
-
 app.post('/api/getVanityUrl', async (req, res) => {
     const { linkedinUrl } = req.body;
     let browser;
@@ -15,7 +13,6 @@ app.post('/api/getVanityUrl', async (req, res) => {
     try {
         browser = await puppeteer.launch({
             args: ['--no-sandbox', '--disable-setuid-sandbox'],
-            executablePath: chromeExecutablePath,
             headless: true
         });
 
