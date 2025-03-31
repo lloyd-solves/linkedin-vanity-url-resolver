@@ -1,24 +1,22 @@
 const express = require('express');
-const puppeteer = require('puppeteer-core');
+const puppeteer = require('puppeteer');
 const cors = require('cors');
 
 const app = express();
 app.use(express.json());
 app.use(cors());
 
-// Use Puppeteer on Heroku explicitly
-const chromeExecutablePath = process.env.GOOGLE_CHROME_BIN || '/app/.heroku/node/bin/google-chrome';
+const chromeExecutablePath = process.env.GOOGLE_CHROME_BIN || '/app/.apt/usr/bin/google-chrome-stable';
 
 app.post('/api/getVanityUrl', async (req, res) => {
     const { linkedinUrl } = req.body;
-
     let browser;
 
     try {
         browser = await puppeteer.launch({
-            headless: true,
+            args: ['--no-sandbox', '--disable-setuid-sandbox'],
             executablePath: chromeExecutablePath,
-            args: ['--no-sandbox', '--disable-setuid-sandbox']
+            headless: true
         });
 
         const page = await browser.newPage();
@@ -37,7 +35,6 @@ app.post('/api/getVanityUrl', async (req, res) => {
         const finalUrl = page.url();
 
         await browser.close();
-
         res.json({ vanityUrl: finalUrl });
 
     } catch (error) {
