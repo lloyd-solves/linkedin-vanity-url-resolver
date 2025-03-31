@@ -1,13 +1,13 @@
 const express = require('express');
-const puppeteer = require('puppeteer-core'); // note: puppeteer-core here
+const puppeteer = require('puppeteer-core');
 const cors = require('cors');
 
 const app = express();
 app.use(express.json());
 app.use(cors());
 
-// This is the key line for Puppeteer on Heroku:
-const chromeExecutablePath = process.env.GOOGLE_CHROME_BIN || '/app/.apt/usr/bin/google-chrome';
+// Use Puppeteer on Heroku explicitly
+const chromeExecutablePath = process.env.GOOGLE_CHROME_BIN || '/app/.heroku/node/bin/google-chrome';
 
 app.post('/api/getVanityUrl', async (req, res) => {
     const { linkedinUrl } = req.body;
